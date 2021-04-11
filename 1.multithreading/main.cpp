@@ -17,7 +17,8 @@ void TestFuncxxx(void)
     return;
 } 
 // Lambda表达式
-// auto lambda = [](int a)->int{ return a; };
+auto lambda = [](int a)->int{ return a; };//  [局部变量列表] （传入的参数） -> 返回类型 { 函数具体内容 }
+                                          //  这个函数代表 int func(int a ) {return a;}
  
 // // 仿函数(functor)
 // class Functor
@@ -49,10 +50,10 @@ int main()
     Functionalxxx = TestFuncxxx;
     Functionalxxx();
 
-    // // Lambda表达式
-    // Functional = lambda;
-    // result = Functional(20);
-    // cout << "Lambda表达式："<< result << endl;
+    // Lambda表达式
+    Functional = lambda;
+    result = Functional(20);
+    cout << "Lambda表达式："<< result << endl;
  
     // // 仿函数
     // Functor testFunctor;
