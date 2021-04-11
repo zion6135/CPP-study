@@ -4,16 +4,31 @@
 
 using namespace std;
 
-void func(string& s) {
-    cout << s << "  hello, this is my thread == " << this_thread::get_id() <<endl;
-}
+struct A
+{
+    void operator()(int limit) {
+        for (int i = 0; i < limit; i++){
+            cout << "i is" << i << endl;
+        }
+    }
+
+    // void operator()(int limit) {
+    //     for (int i = 0; i < limit; i++){
+    //         cout << "limit is" << limit << endl;
+    //     }
+    // }
+};
+
+void show(string& s) {
+    cout << "s == " << s << endl; 
+};
 
 int main() {
-    //thread th = thread(func);
-    
-    string s = "test";
-    thread th = thread(func, std::ref(s));//传入参数s   
-    th.join();
-    cout << "this is main == " << this_thread::get_id()<<endl;
-
+   // string s = "test";
+  //  thread thread1 = thread(A(), s);
+     thread thread1 = thread(A(), 128);
+        for (int i = 0; i < 130; i++){
+            cout << "main is" << i << endl;
+        }
+        thread1.detach();
 }
