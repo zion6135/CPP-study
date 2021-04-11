@@ -1,34 +1,75 @@
-//g++ main.cpp -l pthread
+#include <functional>
 #include <iostream>
-#include <thread>
-
 using namespace std;
+ 
+std::function< int(int)> Functional; //表明函数Functional的参数为int，返回值为int
 
-struct A
+std::function< void(void)> Functionalxxx; //表明函数Functionalxxx的参数为void，返回值为void
+// 普通函数
+int TestFunc(int a)
 {
-    void operator()(int limit) {
-        for (int i = 0; i < limit; i++){
-            cout << "i is" << i << endl;
-        }
-    }
+    return a;
+}
 
-    // void operator()(int limit) {
-    //     for (int i = 0; i < limit; i++){
-    //         cout << "limit is" << limit << endl;
-    //     }
-    // }
-};
+void TestFuncxxx(void)
+{
+    cout << "普通函数：xxx" << endl;
+    return;
+} 
+// Lambda表达式
+// auto lambda = [](int a)->int{ return a; };
+ 
+// // 仿函数(functor)
+// class Functor
+// {
+// public:
+//     int operator()(int a)
+//     {
+//         return a;
+//     }
+// };
+ 
+// // 1.类成员函数
+// // 2.类静态函数
+// class TestClass
+// {
+// public:
+//     int ClassMember(int a) { return a; }
+//     static int StaticMember(int a) { return a; }
+// };
+ 
+int main()
+{
+    // 普通函数
+    Functional = TestFunc;
+    int result = Functional(10);
+    cout << "普通函数："<< result << endl;
 
-void show(string& s) {
-    cout << "s == " << s << endl; 
-};
+    // 普通函数
+    Functionalxxx = TestFuncxxx;
+    Functionalxxx();
 
-int main() {
-   // string s = "test";
-  //  thread thread1 = thread(A(), s);
-     thread thread1 = thread(A(), 128);
-        for (int i = 0; i < 130; i++){
-            cout << "main is" << i << endl;
-        }
-        thread1.detach();
+    // // Lambda表达式
+    // Functional = lambda;
+    // result = Functional(20);
+    // cout << "Lambda表达式："<< result << endl;
+ 
+    // // 仿函数
+    // Functor testFunctor;
+    // Functional = testFunctor;
+    // result = Functional(30);
+    // cout << "仿函数："<< result << endl;
+ 
+    // // 类成员函数
+    // TestClass testObj;
+    // Functional = std::bind(&TestClass::ClassMember, testObj, std::placeholders::_1);
+    // result = Functional(40);
+    // cout << "类成员函数："<< result << endl;
+ 
+    // // 类静态函数
+    // Functional = TestClass::StaticMember;
+    // result = Functional(50);
+    // cout << "类静态函数："<< result << endl;
+ 
+    return 0;
 }
