@@ -6,3 +6,8 @@ linux内核版本：linux-2.6.22.6
 交叉编译工具链：arm-linux-gcc 3.4.5  使用教程：https://blog.csdn.net/m0_37844072/article/details/113729680第三点
 
 led{ 教程： https://blog.csdn.net/m0_37844072/article/details/114107274  }
+
+3.Socket-udp
+编译：进入socket-udp文件夹-->sudo cmake ./-->sudo make 
+客户端运行：./demo client
+服务端运行：./demo
