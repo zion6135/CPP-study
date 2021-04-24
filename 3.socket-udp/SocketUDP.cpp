@@ -127,7 +127,7 @@ int SocketUDP::init()
     udp.detach();
     printf("udp init end\n");
    
-    startProcMsg();
+    startProcMsg();//xxxxx
 
     while(1){
         ;
