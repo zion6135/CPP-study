@@ -54,15 +54,21 @@ int SocketUDP::Receive_Loop()
             printf("Receive Data:%s, size:%d\n", msg_buf, recv_size);
             
             // 处理收到的数据
-            Reveive_Process(msg_buf, recv_size);
+            data_t* tmp;
+            memcpy(tmp, msg_buf, recv_size); //拷贝收到的这种结构体到tmp
+            Reveive_Process(tmp, recv_size);
 
         }
     }
 }
 
-int SocketUDP::Reveive_Process(const char* data, const int len)
+int SocketUDP::Reveive_Process( data_t* data, const int len)
 {
-    printf("===Receive Data:%s, size:%d\n", data, len);
+    //如果收到的消息过多，处理逻辑代码过多，可能会出现掉帧，于是需要 信号量+消息容器的机制来处理
+    m_mutex.lock();
+    data_m.push_back(data);
+    m_mutex.unlock();
+    sem_post(&m_sem);
     return 0;
 }
 
@@ -94,12 +100,35 @@ int SocketUDP::sendUDP(const string msg)
     return 0;
 }
 
+void SocketUDP::startProcMsg()
+{
+    printf("%d:%s", __LINE__, __FUNCTION__);
+
+    thread t([this]() {
+        while (true) {
+            sem_wait(&m_sem);  //阻塞直到    sem_post(&m_sem);
+            vector<data_t*> tmp_map;
+            m_mutex.lock();
+            data_m.swap(tmp_map);
+            m_mutex.unlock();
+            for (auto it = data_m.begin(); it != data_m.end(); it++) {
+                //printf("message == %d\n", *it);
+            }
+            // LOG("End process msg");
+        }
+    });
+    t.detach();
+}
+
 int SocketUDP::init()
 {
     printf("%d:%s\n", __LINE__, __FUNCTION__);
     thread udp(&SocketUDP::main_process, this);
     udp.detach();
     printf("udp init end\n");
+   
+    startProcMsg();
+
     while(1){
         ;
     }

@@ -13,6 +13,7 @@ led{ 教程： https://blog.csdn.net/m0_37844072/article/details/114107274  }
 客户端运行：./demo client
 服务端运行：./demo xxx
 
+添加了信号量和消息队列
 4.json
 //  1.创建json数据
 //  2.cJSON结构体数据
