@@ -12,3 +12,10 @@ led{ 教程： https://blog.csdn.net/m0_37844072/article/details/114107274  }
 注意：需要保证为当前电脑的IP地址
 客户端运行：./demo client
 服务端运行：./demo xxx
+
+4.json
+//  1.创建json数据
+//  2.cJSON结构体数据
+//  3.转cJSON结构体为字符串
+//  4.解析json字符串--> cJSON结构体  
+//  5.解析cJSON结构体得到里面的内容
