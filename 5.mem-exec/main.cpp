@@ -7,8 +7,12 @@ struct point_buffer
 {
     int     len;
     char    *data = nullptr;
+<<<<<<< HEAD
 }__attribute((packed));  //不用字节对齐
 
+=======
+};
+>>>>>>> 896d24bdde7a03c841cb73eaf323c4b8791ef861
 #define CURR_LENGTH 12
 int main() {
 

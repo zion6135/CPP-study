@@ -9,12 +9,12 @@
 #define CURR_LENGTH      512
 
 //  0长度数组
-struct zero_buffer
+struct zero_buffer 
 {
     int     len;
     char    data[0];
 
-}__attribute((packed));
+}__attribute((packed)); //不考虑字节对齐
 
 
 int main(void)
