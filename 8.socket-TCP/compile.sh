@@ -1,0 +1,1 @@
+g++ main.cpp SocketTCP.cpp -l pthread
