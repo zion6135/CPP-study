@@ -1,3 +1,4 @@
+// 创建一个守护线程：每次收到sigalrm信号，执行touchfile()函数
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>

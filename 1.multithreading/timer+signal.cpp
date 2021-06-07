@@ -1,3 +1,5 @@
+// setitimer(ITIMER_REAL, &tv, NULL)定时器定时发出SIGALRM信号
+// 收到SIGALRM信号，执行sigFunc函数
 #include <stdio.h>    // for printf()  
 #include <signal.h> 
 #include <sys/time.h>
