@@ -1,0 +1,1 @@
+cmd_debianutils/lib.a := rm -f debianutils/lib.a; /home/zion/gcc_jz2440/arm-linux-gcc-3.4.5-glibc-2.3.6/bin/arm-linux-ar  rcs debianutils/lib.a debianutils/mktemp.o debianutils/pipe_progress.o debianutils/run_parts.o debianutils/start_stop_daemon.o debianutils/which.o

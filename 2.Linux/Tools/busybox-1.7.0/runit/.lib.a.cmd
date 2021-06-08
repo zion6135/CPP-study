@@ -1,0 +1,1 @@
+cmd_runit/lib.a := rm -f runit/lib.a; /home/zion/gcc_jz2440/arm-linux-gcc-3.4.5-glibc-2.3.6/bin/arm-linux-ar  rcs runit/lib.a runit/chpst.o runit/runit_lib.o runit/runsv.o runit/runsvdir.o runit/sv.o runit/svlogd.o

@@ -1,0 +1,1 @@
+cmd_archival/lib.a := rm -f archival/lib.a; /home/zion/gcc_jz2440/arm-linux-gcc-3.4.5-glibc-2.3.6/bin/arm-linux-ar  rcs archival/lib.a archival/ar.o archival/bbunzip.o archival/cpio.o archival/gzip.o archival/rpm.o archival/rpm2cpio.o archival/tar.o archival/unzip.o
