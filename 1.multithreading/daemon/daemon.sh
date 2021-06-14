@@ -8,12 +8,12 @@ while true; do
         server=`ps aux | grep a.out | grep -v grep`
         if [ ! "$server" ]; then
             #如果不存在就重新启动
-            nohup ./a.out -c 1 &
+            ./a.out
             #启动后沉睡10s
-            sleep 10
+            sleep 1
             echo "reboot"
         fi
         #每次循环沉睡10s
-        sleep 5
+        sleep 2
         echo "this is sleep 5"
 done

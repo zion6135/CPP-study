@@ -1,0 +1,17 @@
+# Target labels
+ Main
+ opencv_flann
+ AccuracyTest
+# Source files and their labels
+/home/zion/Desktop/CPP-study/12.opencv/opencv-3.4.14/modules/flann/test/test_lshtable_badarg.cpp
+ Main
+ opencv_flann
+ AccuracyTest
+/home/zion/Desktop/CPP-study/12.opencv/opencv-3.4.14/modules/flann/test/test_main.cpp
+ Main
+ opencv_flann
+ AccuracyTest
+/home/zion/Desktop/CPP-study/12.opencv/opencv-3.4.14/modules/flann/test/test_precomp.hpp
+ Main
+ opencv_flann
+ AccuracyTest

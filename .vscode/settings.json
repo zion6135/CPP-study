@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "irq.h": "c",
+        "hardware.h": "c",
+        "cstdio": "c",
+        "stdio.h": "c",
+        "kprobes.h": "c",
+        "traps.h": "c",
+        "module.h": "c"
+    }
+}

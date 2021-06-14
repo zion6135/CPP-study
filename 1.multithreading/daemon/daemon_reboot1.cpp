@@ -31,7 +31,7 @@ void executeCMD(const char *cmd, char *result)
 int main()
 {
         char result[1024]={0};
-        executeCMD("ps", result);
+        executeCMD("ps aux | grep ./a.out | awk '{print $2}'", result); // 得到a.ou的PID
 //      这行是将每一行的输出拼接之后获取到了result字符串中了
         printf("%s", result);
         return 0;

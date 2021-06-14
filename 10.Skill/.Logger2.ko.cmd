@@ -1,0 +1,1 @@
+cmd_/home/zion/Desktop/CPP-study/10.Skill/Logger2.ko := /home/zion/gcc_jz2440/arm-linux-gcc-3.4.5-glibc-2.3.6/bin/arm-linux-ld -EL  -r -o /home/zion/Desktop/CPP-study/10.Skill/Logger2.ko /home/zion/Desktop/CPP-study/10.Skill/Logger2.o /home/zion/Desktop/CPP-study/10.Skill/Logger2.mod.o
