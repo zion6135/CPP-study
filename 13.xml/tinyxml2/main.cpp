@@ -1,4 +1,4 @@
-// 编译：g++ tinyxml.cpp main.cpp
+// 编译：g++ tinyxml2.cpp main.cpp
 
 #include "tinyxml2.h"
 #include <string>
@@ -82,6 +82,15 @@ void read_xml() {
     // printf("havp_path_pos = %s\n", contentStu.c_str());
 }
 
+void printXml() {
+    XMLDocument doc;
+    XMLError error = doc.LoadFile("school.xml");
+    if (error != XMLError::XML_SUCCESS) {
+        return;
+    }
+    doc.Print();
+}
+
 void read_xml_element(const char* file_name, const char* element_name) {
     tinyxml2::XMLDocument doc;
     
@@ -114,6 +123,9 @@ int main() {
         // 读取xml的element
         creat_xml0();
         read_xml_element("school.xml", "havp_path_pos");
+    }
+    {
+        printXml();
     }
     // creat_xml0();
     // read_xml();
