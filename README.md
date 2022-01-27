@@ -1,5 +1,5 @@
 # CPP-study
-记录C++学习历程
+记录学习历程
 
 2.Linux:
 linux内核版本：linux-2.6.22.6
