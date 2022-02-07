@@ -4,9 +4,40 @@
 // 文件系统：
 // 类ls的实现
 
+// 4
 // 一.目录和文件
 // 1.获取文件属性 4.2
+// stat/fstat/lstat
+// stat 命令： stat [file_name] //是通过stat()函数封装出来的
+#if 0
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+static off_t flen(const char *fname) {
+    struct stat statres;
+
+    if (stat(fname, &statres) < 0) {
+        perror("stat()");
+        exit(1);
+    }
+    return statres.st_size;  // st_size为off_t
+}
+int main(int argc, char **argv) {
+    if (argc < 2) {
+        fprintf(stderr, "Usage...\n");
+        exit(1);
+    }
+
+    off_t len = flen(argv[1]);
+
+    fprintf(stdout, "len = [%ld]", len);  // 与ll 或者 stat argv[1]结果一样
+    exit(0);
+}
+#endif
 // 2.文件访问权限 ls -l  4.7
+
 // 3.umask  4.8
 // 4.文件权限更改/管理 chmod,  4.9
 // 5.粘住位 4.10
