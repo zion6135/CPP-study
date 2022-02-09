@@ -36,7 +36,56 @@ int main(int argc, char **argv) {
     exit(0);
 }
 #endif
+#if 0
+// 通过lseek创建5G大小的文件tmp，同过stat tmp查看的内容，对应struct stat的变量
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+int main(int argc, char **argv) {
+    int fd;
+
+    if (argc < 2) {
+        fprintf(stderr, "Usage..\n");
+        exit(1);
+    }
+
+    fd = open(argv[1], O_WRONLY | O_CREAT | O_TRUNC, 0600);
+    if (fd < 0) {
+        exit(1);
+    }
+    // 必须用LL, 否则会当作int来使用，会达不到5G的大小
+    lseek(fd, 5LL * 1024LL * 1024LL - 1LL, SEEK_SET);
+
+    write(fd, "", 1);
+    close(fd);
+    exit(0);
+}
+#endif
+
+//查看文件类型
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+int main(int argv, char **argc) {
+    struct stat tmp;
+
+    stat(argc[1], &tmp);
+
+    if (S_ISREG(tmp.st_mode)) {  // 返回ture,代表是常规文件
+        fprintf(stdout, "is regular file\n");
+    }
+
+    exit(0);
+}
 // 2.文件访问权限 ls -l  4.7
+// 对应stat的st_mode（bitmap）-----及ll 最前面的内容
 
 // 3.umask  4.8
 // 4.文件权限更改/管理 chmod,  4.9
