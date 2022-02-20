@@ -149,6 +149,7 @@ int main() {
 }
 #endif
 // shell的简单外部命令实现：
+#if 0
 #include <glob.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -231,3 +232,48 @@ int main() {
     puts("end\n");
     exit(0);
 }
+#endif
+
+// 8.11 seuid()
+// cat /etc/passwd 权限不够
+// ./main 0 cat /etc/passwd  以root(0)用户权限cat /etc/passwd
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+int main(int argc, char **argv) {
+    if (argc < 3) {
+        fprintf(stderr, "usage...\n");
+        exit(1);
+    }
+    pid_t pid = fork();
+    if (pid == 0) {
+        setuid(atoi(argv[1]));  // 将effective id设为uid
+        execvp(argv[2], argv + 2);
+        perror("execvp()");
+        exit(1);
+    }
+    wait(NULL);  // 父进程等待
+    exit(0);
+}
+
+// 编译:make main
+// 可执行程序./main把自己设置为root用户的权限
+// lbw@123:~/lbw/gitNote/chap8$ ./main 0 cat /etc/shadow
+// cat: /etc/shadow: 权限不够
+
+// 查看main程序的所有者
+// lbw@123:~/lbw/gitNote/chap8$ ll -l main
+// -rwxrwxr-x 1 lbw lbw 17040 2月  20 21:02 main*
+
+// 修改main程序的所有者：由lbw变为root
+// lbw@123:~/lbw/gitNote/chap8$ sudo chown root main
+// lbw@123:~/lbw/gitNote/chap8$ ll -l main
+// -rwxrwxr-x 1 root lbw 17040 2月  20 21:02 main*
+
+//修改权限
+// lbw@123:~/lbw/gitNote/chap8$ sudo chmod u+s main
+// -rwsrwxr-x 1 root lbw 17040 2月  20 21:02 main*
+
+//执行成功
+// lbw@123:~/lbw/gitNote/chap8$ ./main 0 cat /etc/shadow
