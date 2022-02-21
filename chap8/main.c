@@ -237,6 +237,7 @@ int main() {
 // 8.11 seuid()
 // cat /etc/passwd 权限不够
 // ./main 0 cat /etc/passwd  以root(0)用户权限cat /etc/passwd
+#if 0
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -256,7 +257,7 @@ int main(int argc, char **argv) {
     wait(NULL);  // 父进程等待
     exit(0);
 }
-
+#endif
 // 编译:make main
 // 可执行程序./main把自己设置为root用户的权限
 // lbw@123:~/lbw/gitNote/chap8$ ./main 0 cat /etc/shadow
@@ -277,3 +278,14 @@ int main(int argc, char **argv) {
 
 //执行成功
 // lbw@123:~/lbw/gitNote/chap8$ ./main 0 cat /etc/shadow
+
+// 8.13 system = fork + exec+wait的封装
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    system("date > /tmp/out");
+
+    exit(0);
+}
