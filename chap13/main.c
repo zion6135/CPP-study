@@ -4,6 +4,7 @@
 //终端: setsid()
 
 // 守护进程
+
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -39,6 +40,7 @@ static int daemonize() {
     // umask(0);
     return 0;
 }
+#if 0
 #define FNAME "/tmp/out"
 int main() {
     if (daemonize()) {
@@ -58,6 +60,7 @@ int main() {
 
     exit(0);
 }
+#endif
 // 父进程执行结束，子进程后台运行
 // lbw@lbw:~/lbw/gitNote/chap9$ g++ main.c -o mydaemon
 // lbw@lbw:~/lbw/gitNote/chap9$ ./mydaemon
@@ -81,3 +84,29 @@ int main() {
 
 //杀死守护进程
 // lbw@lbw:~/lbw/gitNote/chap9$kill -9 4160831
+
+// 13.4 出错记录
+
+// 系统日志服务syslogd
+// lbw@lbw:~/lbw/gitNote$ ps axj | grep "syslogd"
+//       1    1089    1089    1089 ?             -1 Ssl    104  72:40 /usr/sbin/rsyslogd -n -iNONE
+//  141691 1562383 1562382  141691 pts/0    1562382 S+    1000   0:00 grep --color=auto syslogd
+
+#include <errno.h>
+#include <string.h>
+#include <syslog.h>
+
+#define FNAME "/tmp/out"
+int main() {
+    openlog("lbwwww", LOG_PID, LOG_DAEMON);
+
+    syslog(LOG_INFO, "daemon() sucess");
+    printf("1111\n");
+    syslog(LOG_ERR, "fopen:%s", strerror(errno));
+
+    syslog(LOG_INFO, "%s was opend.", FNAME);
+    syslog(LOG_DEBUG, "%d is printed", 2);
+    sleep(1);
+
+    exit(0);
+}
