@@ -57,6 +57,7 @@ int main() {
 #endif
 // 10.6 函数alarm
 // 5s后杀死进程
+#if 0
 int main() {
     alarm(5);  // 默认杀死进程
     // alarm(2);  //超过一个alarm()，程序会在设定的alarm() 最后最早的alarm被杀死
@@ -65,3 +66,109 @@ int main() {
     }
     exit(0);
 }
+#endif
+#include <time.h>
+
+#if 0
+// 5s的定时程序：用time()函数
+int main() {
+    time_t end;
+    int64_t count = 0;
+
+    end = time(NULL) + 5;
+
+    while (time(NULL) <= end) {
+        count++;
+    }
+    printf("%lld\n", count);
+}
+// time ./a.out 可以看到time调用的时间是不准的
+// lbw@HP-ZHAN-66-Pro-15-G3:~/lbw/gitNote/chap10$ time ./a.out
+// 1761106842
+
+// real    0m5.770s
+// user    0m5.769s
+// sys     0m0.000s
+#endif
+
+#if 0
+// 5s的定时程序：用alarm() + signal()
+
+// 同一个程序用gcc main.c -O1优化编译，如果不加volatile，会让程序进入死循环
+// 而volatile的用处就体现出来了：让编译器对这个变量不在进行编译优化，这个时候在用gcc main.c -O1优化编译也不会出问题
+volatile int loop = 1;
+
+void alarm_handler(int s) {
+    loop = 0;
+}
+
+int main() {
+    alarm(5);
+    signal(SIGALRM, alarm_handler);
+    int count = 0;
+    while (loop) {
+        count++;
+    }
+    printf("%lld\n", count);
+
+    exit(0);
+}
+//打印结果如下 ：可以看到时间精度很高
+// lbw@HP-ZHAN-66-Pro-15-G3:~/lbw/gitNote/chap10$ time ./a.out
+// 2474397847
+
+// real    0m5.002s
+// user    0m5.000s
+// sys     0m0.000s
+// lbw@HP-ZHAN-66-Pro-15-G3:~/lbw/gitNote/chap10$
+#endif
+
+#if 0
+//漏桶： 流控：控制打印速度 alarm + signal
+volatile int loop = 0;
+
+void alarm_handler(int s) {
+    alarm(1);
+    loop = 1;
+}
+
+int main(int argc, char **argv) {
+    signal(SIGALRM, alarm_handler);
+    alarm(1);
+
+    while (1) {
+        while (!loop)
+            pause();
+        loop = 0;
+        printf("hello,hello\n");
+    }
+}
+#endif
+
+#if 0
+//令牌桶：有权限一秒打印一次hello,
+//如果程序被阻塞了3s，分配给程序的资源：3s打印3次hello，那么解除阻塞之后，程序就会拥有打印3次hello的权限，于时可以打印3次。
+// 相比于漏桶，不会白白浪费可使用资源。
+volatile int token = 0;
+#define MAX 100
+void alarm_handler(int s) {
+    alarm(1);
+    token++;  //增加令牌
+    if (token > MAX) {
+        token = MAX;
+    }
+}
+
+int main(int argc, char **argv) {
+    signal(SIGALRM, alarm_handler);
+    alarm(1);
+
+    while (1) {
+        while (token <= 0)
+            pause();
+        token--;  //消耗令牌
+        // 模拟操作
+        printf("hello\n");
+    }
+}
+#endif
