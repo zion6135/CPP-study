@@ -172,3 +172,38 @@ int main(int argc, char **argv) {
     }
 }
 #endif
+
+// 10.11信号集  10.12信号屏蔽字
+void int_handler(void) {
+    fprintf(stdout, "1\n");
+}
+int main() {
+    sigset_t set, set_old2, set_old;
+
+    signal(SIGINT, int_handler);
+    // 清0
+    sigemptyset(&set);
+    // 将信号SIGINT加入信号集
+    sigaddset(&set, SIGINT);
+    // 保存之前状态
+    sigprocmask(SIG_UNBLOCK, &set, &set_old);
+    {
+        for (int i = 0; i < 5; i++) {
+            //对信号集set的信号阻塞SIG_BLOCK，之后不在响应信号集set的信号
+            sigprocmask(SIG_BLOCK, &set, &set_old2);
+            {  //因为包含SIGINT的信号集set被阻塞，所以不响应SIGINT--即ctrl+c不调用int_handler
+                for (int i = 0; i < 5; i++) {
+                    write(1, "*", 1);
+                    sleep(1);
+                }
+                write(1, "\n", 1);
+            }
+            //对信号集set的信号解除阻塞SIG_UNBLOCK,恢复对set的响应
+            sigprocmask(SIG_UNBLOCK, &set_old2, NULL);
+        }
+    }
+    //恢复之前的状态
+    sigprocmask(SIG_SETMASK, &set_old, NULL);
+}
+
+//在打印5行*****期间是不会响应SIGINT的，只会在打印结束时候调用一次int_handler
