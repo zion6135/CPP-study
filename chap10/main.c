@@ -173,7 +173,9 @@ int main(int argc, char **argv) {
 }
 #endif
 
-// 10.11信号集  10.12信号屏蔽字
+// 10.11信号集
+
+// 10.12信号屏蔽字sigprocmask()
 void int_handler(void) {
     fprintf(stdout, "1\n");
 }
@@ -206,4 +208,81 @@ int main() {
     sigprocmask(SIG_SETMASK, &set_old, NULL);
 }
 
-//在打印5行*****期间是不会响应SIGINT的，只会在打印结束时候调用一次int_handler
+//在打印5次*期间是不会响应SIGINT的，只会在打印结束时候调用一次int_handler
+
+// 10.13 sigpending()
+
+// 10.15 siglongjmp()
+// 不能在信号处理函数随便往外跳，即不能用setjmp/longjmp函数，
+// 需要保存/恢复屏蔽字，用siglongjmp()
+
+// 10.16 sigsuspend()
+#if 0
+void int_handler(void) {
+    fprintf(stdout, "1\n");
+}
+int main() {
+    sigset_t set, set_old2, set_old;
+
+    signal(SIGINT, int_handler);
+    // 清0
+    sigemptyset(&set);
+    // 将信号SIGINT加入信号集
+    sigaddset(&set, SIGINT);
+    // 保存之前状态
+    sigprocmask(SIG_UNBLOCK, &set, &set_old);
+    {
+        for (int i = 0; i < 5; i++) {
+            //对信号集set的信号阻塞SIG_BLOCK，之后不在响应信号集set的信号
+            sigprocmask(SIG_BLOCK, &set, &set_old2);
+            {  //因为包含SIGINT的信号集set被阻塞，所以不响应SIGINT--即ctrl+c不调用int_handler
+                for (int i = 0; i < 5; i++) {
+                    write(1, "*", 1);
+                    sleep(1);
+                }
+                write(1, "\n", 1);
+            }
+            // 1.先调用SIG_UNBLOCK解除阻塞，
+            sigprocmask(SIG_UNBLOCK, &set_old2, NULL);
+            // 2.然后立刻响应打印*期间调用的信号回调函数：int_handler();
+            // 3.然后调用pause()函数
+            pause();
+        }
+    }
+    //恢复之前的状态
+    sigprocmask(SIG_SETMASK, &set_old, NULL);
+}
+//由于有注释的1.2.3的情况，所以1.2.3不是原子操作。
+// 所以希望有一个原子操作实现：sigprocmask(SIG_UNBLOCK, &set_old2, NULL); + pause()的效果
+#endif
+
+void int_handler(void) {
+    fprintf(stdout, "1\n");
+}
+int main() {
+    sigset_t set, set_old2, set_old;
+
+    signal(SIGINT, int_handler);
+    // 清0
+    sigemptyset(&set);
+    // 将信号SIGINT加入信号集
+    sigaddset(&set, SIGINT);
+    // 保存之前状态
+    sigprocmask(SIG_UNBLOCK, &set, &set_old);
+    sigprocmask(SIG_BLOCK, &set, &set_old2);
+
+    {
+        for (int i = 0; i < 5; i++) {
+            {  //因为包含SIGINT的信号集set被阻塞，所以不响应SIGINT--即ctrl+c不调用int_handler
+                for (int i = 0; i < 5; i++) {
+                    write(1, "*", 1);
+                    sleep(1);
+                }
+                write(1, "\n", 1);
+            }
+            sigsuspend(&set_old2);
+        }
+    }
+    //恢复之前的状态
+    sigprocmask(SIG_SETMASK, &set_old, NULL);
+}
