@@ -133,4 +133,120 @@ int main() {
 }
 #endif
 
-/*线程的小例子*/
+// 11.6 线程同步
+
+/*线程竞争的小例子
+ 千万不要在多线程用sleep()
+*/
+#if 0
+#include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+
+#define LEFT 30000000
+#define RIGHT 30000200
+#define THRNUM (RIGHT - LEFT + 1)
+
+static void *thr_prime(void *p) {
+    int i, j, mark;
+    i = *(int *)p;
+    mark = 1;
+    for (j = 2; j < i / 2; j++) {
+        if (i % j == 0) {
+            mark = 0;
+            break;
+        }
+    }
+
+    if (mark) {
+        printf("%d is primer\n", i);
+    }
+
+    pthread_exit(p);
+}
+
+int main() {
+    // 创建THRNUM个线程
+    int i, mark, j;
+    pthread_t tid[THRNUM];
+    int *mt;
+    void *ptr;
+    for (i = LEFT; i <= RIGHT; i++) {
+        mt = (int *)malloc(sizeof(int));
+        *mt = i;
+        int err = pthread_create(tid + i - LEFT, NULL, thr_prime, mt);
+        if (err) {
+            fprintf(stderr, "pthread create error %s", strerror(err));
+        }
+    }
+    for (i = LEFT; i <= RIGHT; i++) {
+        pthread_join(tid[i - LEFT], &ptr);
+        free(ptr);
+    }
+    exit(0);
+}
+
+#endif
+
+// 竞争故障
+#include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#include <string.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+
+#define THRNUM 20
+#define FNAME "/tmp/out"
+#define LINESIZE 1024
+
+static void *thr_add(void *p) {
+    FILE *fp;
+
+    char linebuf[LINESIZE];
+    fp = fopen(FNAME, "r+");
+    if (fp == NULL) {
+        perror("fopen()");
+        exit(1);
+    }
+    fgets(linebuf, LINESIZE, fp);
+    fseek(fp, 0, SEEK_SET);  //更新到文件首
+
+    fprintf(fp, "%d\n", atoi(linebuf) + 1);
+
+    fclose(fp);
+
+    pthread_exit(NULL);
+}
+
+int main() {
+    pthread_t tid[THRNUM];
+    int i;
+    for (i = 0; i < THRNUM; i++) {
+        int err = pthread_create(tid + i, NULL, thr_add, NULL);  // 20个线程同时打开线程
+        if (err) {
+            fprintf(stderr, "pthread_create(): %s\n", strerror(err));
+            exit(1);
+        }
+    }
+    exit(0);
+}
+
+/* 11.6.1 互斥量
+本质上是一把锁，比如一个房间20个人进去会有问题，我希望一个人一个人进去，一个人枪到了锁（互斥量），进入房间，用完了之后出来，把锁释放。
+动态初始化：
+  创建：pthread_mutex_init()
+  销毁:pthread_destory()
+  上锁:pthread_mutex_lock()  /  pthread_mutex_trylock()
+  解锁:pthread_mutex_unlock()
+
+静态初始化：
+  pthrad_mutex tmp =
+
+*/
