@@ -247,6 +247,6 @@ int main() {
   解锁:pthread_mutex_unlock()
 
 静态初始化：
-  pthrad_mutex tmp =
+  pthrad_mutex tmp = 
 
 */
